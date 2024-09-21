@@ -15,6 +15,8 @@ require_once plugin_dir_path(__FILE__) . 'includes/film-meta.php';
 require_once plugin_dir_path(__FILE__) . 'includes/film-columns.php';
 
 
+
+
 // / Ajouter un hook pour la synchronisation des films une fois WordPress initialisé
 
 add_action('init', 'synchronize_movies_from_api');

@@ -16,6 +16,10 @@ add_action('add_meta_boxes', 'add_film_meta_boxes');
 // Afficher les champs dans l'admin
 function display_film_meta_box($post)
 {
+    // Ajouter un champ nonce pour la vérification de sécurité
+    wp_nonce_field('film_save_meta_box_data', 'film_meta_box_nonce');
+
+    // Récupérer les valeurs des champs personnalisés
     $release_date = get_post_meta($post->ID, 'release_date', true);
     $vote_average = get_post_meta($post->ID, 'vote_average', true);
     $poster_path = get_post_meta($post->ID, 'poster_path', true);
@@ -57,6 +61,17 @@ function display_film_meta_box($post)
 // Sauvegarder les champs personnalisés
 function save_film_meta_box_data($post_id)
 {
+    // Vérification du nonce
+    if (!isset($_POST['film_meta_box_nonce']) || !wp_verify_nonce($_POST['film_meta_box_nonce'], 'film_save_meta_box_data')) {
+        return;
+    }
+
+    // Vérification des permissions
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+
+    // Sauvegarder les champs personnalisés
     $fields = [
         'release_date',
         'vote_average',
@@ -68,8 +83,13 @@ function save_film_meta_box_data($post_id)
     ];
 
     foreach ($fields as $field) {
-        if (array_key_exists($field, $_POST)) {
-            update_post_meta($post_id, $field, sanitize_text_field($_POST[$field]));
+        if (isset($_POST[$field])) {
+            // Assurez-vous que les données saisies soient bien nettoyées et sauvegardées
+            $sanitized_value = sanitize_text_field($_POST[$field]);
+            update_post_meta($post_id, $field, $sanitized_value);
+
+            // Log pour vérifier que les données sont bien mises à jour
+            error_log('Mise à jour de ' . $field . ' pour le film ' . $post_id . ' avec la valeur : ' . $sanitized_value);
         }
     }
 }
