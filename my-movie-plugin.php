@@ -11,6 +11,8 @@ require_once plugin_dir_path(__FILE__) . 'includes/sync-movies.php';
 require_once plugin_dir_path(__FILE__) . 'includes/tmdb-api.php';
 require_once plugin_dir_path(__FILE__) . 'includes/post-types.php';
 require_once plugin_dir_path(__FILE__) . 'includes/view-movies.php';
+require_once plugin_dir_path(__FILE__) . 'includes/film-meta.php';
+require_once plugin_dir_path(__FILE__) . 'includes/film-columns.php';
 
 
 // / Ajouter un hook pour la synchronisation des films une fois WordPress initialisé
@@ -34,6 +36,7 @@ function synchronize_movies_from_api()
 //Mettre à jour les films quotidiennement et automatiquement
 // Ajouter l'événement Cron 
 add_action('wp', 'schedule_daily_movie_sync');
+
 
 function schedule_daily_movie_sync()
 {

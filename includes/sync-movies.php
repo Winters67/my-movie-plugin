@@ -33,13 +33,31 @@ function store_movies_in_db($movies_with_details)
                 update_post_meta($post_id, 'tmdb_id', $movie['id']);
                 update_post_meta($post_id, 'release_date', $movie['release_date']);
                 update_post_meta($post_id, 'vote_average', $movie['vote_average']);
+                update_post_meta($post_id, 'vote_count', $movie['vote_count']);
                 update_post_meta($post_id, 'poster_path', 'https://image.tmdb.org/t/p/w500' . $movie['poster_path']);
+                update_post_meta($post_id, 'backdrop_path', 'https://image.tmdb.org/t/p/w500' . $movie['backdrop_path']);
+                update_post_meta($post_id, 'popularity', $movie['popularity']);
+                update_post_meta($post_id, 'original_language', $movie['original_language']);
+                update_post_meta($post_id, 'media_type', $movie['media_type']);
+                update_post_meta($post_id, 'genre_ids', implode(', ', $movie['genre_ids']));
                 error_log('Film inséré avec succès. ID du post : ' . $post_id);
             } else {
                 error_log('Erreur lors de l\'insertion du film avec ID TMDb ' . $movie_id . ' : ' . $post_id->get_error_message());
             }
         } else {
-            error_log('Le film avec ID TMDb ' . $movie_id . ' existe déjà.');
+            // Mettre à jour les métadonnées du film existant
+            $post_id = $existing_movie[0]->ID; // Récupérer l'ID du post existant
+            update_post_meta($post_id, 'release_date', $movie['release_date']);
+            update_post_meta($post_id, 'vote_average', $movie['vote_average']);
+            update_post_meta($post_id, 'vote_count', $movie['vote_count']);
+            update_post_meta($post_id, 'popularity', $movie['popularity']);
+            update_post_meta($post_id, 'original_language', $movie['original_language']);
+            update_post_meta($post_id, 'media_type', $movie['media_type']);
+            update_post_meta($post_id, 'genre_ids', implode(', ', $movie['genre_ids']));
+            update_post_meta($post_id, 'poster_path', 'https://image.tmdb.org/t/p/w500' . $movie['poster_path']);
+            update_post_meta($post_id, 'backdrop_path', 'https://image.tmdb.org/t/p/w500' . $movie['backdrop_path']);
+
+            error_log('Le film avec ID TMDb ' . $movie_id . ' existe déjà, mise à jour des métadonnées.');
         }
     }
 

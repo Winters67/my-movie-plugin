@@ -25,6 +25,7 @@ function register_film_post_type()
         'menu_position'      => 5,
         'show_in_rest'       => true, // Activer l'éditeur Gutenberg
         'rewrite'            => array('slug' => 'films'),
+        'capability_type'    => 'post', // Cela permet à tous les rôles qui peuvent gérer les posts d'accéder aux films
     );
 
     register_post_type('film', $args);
