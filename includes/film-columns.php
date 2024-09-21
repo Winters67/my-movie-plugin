@@ -42,3 +42,48 @@ function custom_film_column($column, $post_id)
     }
 }
 add_action('manage_film_posts_custom_column', 'custom_film_column', 10, 2);
+
+// Rendre certaines colonnes triables
+function set_sortable_film_columns($columns)
+{
+    $columns['release_date'] = 'release_date';
+    $columns['vote_average'] = 'vote_average';
+    $columns['vote_count'] = 'vote_count';
+    $columns['popularity'] = 'popularity';
+    $columns['original_language'] = 'original_language'; // Nouvelle colonne triable pour la langue originale
+    $columns['media_type'] = 'media_type'; // Nouvelle colonne triable pour le type de média
+
+    return $columns;
+}
+add_filter('manage_edit-film_sortable_columns', 'set_sortable_film_columns');
+
+// Appliquer l'ordre de tri personnalisé
+function custom_film_column_orderby($query)
+{
+    if (!is_admin()) {
+        return;
+    }
+
+    $orderby = $query->get('orderby');
+
+    if ('release_date' === $orderby) {
+        $query->set('meta_key', 'release_date');
+        $query->set('orderby', 'meta_value');
+    } elseif ('vote_average' === $orderby) {
+        $query->set('meta_key', 'vote_average');
+        $query->set('orderby', 'meta_value_num');
+    } elseif ('vote_count' === $orderby) {
+        $query->set('meta_key', 'vote_count');
+        $query->set('orderby', 'meta_value_num');
+    } elseif ('popularity' === $orderby) {
+        $query->set('meta_key', 'popularity');
+        $query->set('orderby', 'meta_value_num');
+    } elseif ('original_language' === $orderby) {
+        $query->set('meta_key', 'original_language');
+        $query->set('orderby', 'meta_value');
+    } elseif ('media_type' === $orderby) {
+        $query->set('meta_key', 'media_type');
+        $query->set('orderby', 'meta_value');
+    }
+}
+add_action('pre_get_posts', 'custom_film_column_orderby');
