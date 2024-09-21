@@ -31,3 +31,30 @@ function register_film_post_type()
     register_post_type('film', $args);
 }
 add_action('init', 'register_film_post_type');
+
+function include_film_meta_in_search($query)
+{
+    if ($query->is_search() && !is_admin()) {
+        $meta_query = array(
+            'relation' => 'OR',
+            array(
+                'key'     => 'release_date',
+                'value'   => $query->query_vars['s'],
+                'compare' => 'LIKE'
+            ),
+            array(
+                'key'     => 'vote_average',
+                'value'   => $query->query_vars['s'],
+                'compare' => 'LIKE'
+            ),
+            array(
+                'key'     => 'original_language',
+                'value'   => $query->query_vars['s'],
+                'compare' => 'LIKE'
+            )
+        );
+
+        $query->set('meta_query', $meta_query);
+    }
+}
+add_action('pre_get_posts', 'include_film_meta_in_search');

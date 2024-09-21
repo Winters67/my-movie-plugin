@@ -13,6 +13,8 @@ require_once plugin_dir_path(__FILE__) . 'includes/post-types.php';
 require_once plugin_dir_path(__FILE__) . 'includes/view-movies.php';
 require_once plugin_dir_path(__FILE__) . 'includes/film-meta.php';
 require_once plugin_dir_path(__FILE__) . 'includes/film-columns.php';
+require_once plugin_dir_path(__FILE__) . 'includes/register-block.php';
+
 
 
 
