@@ -8,6 +8,8 @@ Author: Emmanuel
 
 // fichier nécessaire pour l'API TMDb
 require_once plugin_dir_path(__FILE__) . 'includes/tmdb-api.php';
+require_once plugin_dir_path(__FILE__) . 'includes/post-types.php';
+
 
 // Ajouter un hook pour afficher les films récupérés dans une page d'administration
 add_action('admin_menu', function () {
