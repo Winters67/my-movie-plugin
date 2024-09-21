@@ -10,6 +10,19 @@ function register_film_block()
         filemtime(plugin_dir_path(__FILE__) . '../build/block.js') // Ajoute une version basée sur la dernière modification
     );
 
+
+    function enqueue_film_block_assets()
+    {
+        wp_enqueue_style(
+            'film-block-css',
+            plugins_url('../css/film-style.css', __FILE__),
+            array(),
+            filemtime(plugin_dir_path(__FILE__) . '../css/film-style.css') // Ajoute une version basée sur la dernière modification
+        );
+    }
+    add_action('wp_enqueue_scripts', 'enqueue_film_block_assets');
+
+
     // Enregistrer le bloc côté PHP
     register_block_type('custom-plugin/film-block', array(
         'editor_script' => 'film-block',
@@ -30,29 +43,53 @@ add_action('init', 'register_film_block');
 
 function render_film_block($attributes)
 {
-    // Récupérer les films selon les attributs
-    $films = $attributes['displayLatest'] ?
-        get_posts(array('post_type' => 'film', 'posts_per_page' => 3)) :
-        get_posts(array('post_type' => 'film', 'p' => $attributes['filmId']));
-
-    // Vérification et rendu HTML
-    if (empty($films)) {
-        return 'Aucun film trouvé';
+    if ($attributes['displayLatest']) {
+        // Récupérer les 3 derniers films
+        $films = get_posts(array(
+            'post_type' => 'film',
+            'posts_per_page' => 3,
+            'orderby' => 'date',
+            'order' => 'DESC',
+        ));
+    } else {
+        // Récupérer un film spécifique par son ID
+        $films = get_posts(array(
+            'post_type' => 'film',
+            'p' => $attributes['filmId'],
+        ));
     }
 
+    if (empty($films)) {
+        return '<p>Aucun film trouvé.</p>';
+    }
+
+    // Générer le HTML pour afficher chaque film
     $output = '<div class="film-block">';
     foreach ($films as $film) {
         $poster = get_post_meta($film->ID, 'poster_path', true);
         $release_date = get_post_meta($film->ID, 'release_date', true);
         $vote_average = get_post_meta($film->ID, 'vote_average', true);
+        $vote_count = get_post_meta($film->ID, 'vote_count', true);
+        $popularity = get_post_meta($film->ID, 'popularity', true);
+        $original_language = get_post_meta($film->ID, 'original_language', true);
+        $media_type = get_post_meta($film->ID, 'media_type', true);
+        $genre_ids = get_post_meta($film->ID, 'genre_ids', true);
+
         $output .= '<div class="film">';
+        $output .= '<div class="film-poster"><img src="' . esc_url($poster) . '" alt="' . esc_attr($film->post_title) . '"></div>';
+        $output .= '<div class="film-details">';
         $output .= '<h3>' . esc_html($film->post_title) . '</h3>';
-        $output .= '<img src="' . esc_url($poster) . '" />';
+        $output .= '<p>' . esc_html($film->post_content) . '</p>';
         $output .= '<p>Date de sortie : ' . esc_html($release_date) . '</p>';
-        $output .= '<p>Note : ' . esc_html($vote_average) . '</p>';
-        $output .= '</div>';
+        $output .= '<p>Note : ' . esc_html($vote_average) . ' (' . esc_html($vote_count) . ' votes)</p>';
+        $output .= '<p>Popularité : ' . esc_html($popularity) . '</p>';
+        $output .= '<p>Langue originale : ' . esc_html($original_language) . '</p>';
+        $output .= '<p>Type de média : ' . esc_html($media_type) . '</p>';
+        $output .= '<p>Genres : ' . esc_html($genre_ids) . '</p>';
+        $output .= '</div>'; // .film-details
+        $output .= '</div>'; // .film
     }
-    $output .= '</div>';
+    $output .= '</div>'; // .film-block
 
     return $output;
 }

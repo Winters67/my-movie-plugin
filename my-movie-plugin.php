@@ -16,6 +16,13 @@ require_once plugin_dir_path(__FILE__) . 'includes/film-columns.php';
 require_once plugin_dir_path(__FILE__) . 'includes/register-block.php';
 
 
+//  charge le fichier CSS dans le frontend.
+// function enqueue_film_styles()
+// {
+//     wp_enqueue_style('film-styles', plugins_url('../css/films-style.css', __FILE__));
+// }
+// add_action('wp_enqueue_scripts', 'enqueue_film_styles');
+
 
 
 
