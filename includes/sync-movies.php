@@ -1,6 +1,4 @@
 <?php
-
-// Fonction pour stocker les films dans la base de données WordPress
 // Fonction pour stocker les films dans la base de données WordPress
 function store_movies_in_db($movies_with_details)
 {
