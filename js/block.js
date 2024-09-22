@@ -3,7 +3,7 @@ const { TextControl, CheckboxControl } = wp.components;
 const { InspectorControls } = wp.blockEditor;
 
 registerBlockType("custom-plugin/film-block", {
-  title: "Film Block",
+  title: "Bloc Film",
   icon: "video-alt2",
   category: "widgets",
   attributes: {
@@ -30,17 +30,22 @@ registerBlockType("custom-plugin/film-block", {
           {!displayLatest && (
             <TextControl
               label="ID du film"
-              value={filmId}
+              value={filmId || ""}
               type="number"
               onChange={(value) => setAttributes({ filmId: parseInt(value) })}
             />
           )}
         </InspectorControls>
-        <div>{displayLatest ? "Derniers films" : `Film ID: ${filmId}`}</div>
+        <div>
+          {displayLatest
+            ? "Affichage des 3 derniers films"
+            : `Affichage du film avec ID : ${filmId}`}
+        </div>
       </>
     );
   },
   save: () => {
-    return null; // Les blocs dynamiques n'ont pas besoin de rendu côté client
+    // Le rendu sera côté serveur avec PHP
+    return null;
   },
 });

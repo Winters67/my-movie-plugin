@@ -32,7 +32,7 @@ function get_trending_movies($time_window = 'day')
     $data = json_decode($body, true);
     $movies = $data['results'] ?? [];
 
-    // Maintenant, récupérons les détails pour chaque film
+    // Récupération des détails pour chaque film
     $detailed_movies = [];
     foreach ($movies as $movie) {
         $movie_details = get_movie_details($movie['id'], $bearer_token);
@@ -67,6 +67,18 @@ function get_movie_details($movie_id, $bearer_token)
 
     $body = wp_remote_retrieve_body($response);
     $data = json_decode($body, true);
+
+    // Traitement spécifique des genres
+    if (isset($data['genres']) && is_array($data['genres'])) {
+        $genre_names = [];
+        foreach ($data['genres'] as $genre) {
+            $genre_names[] = $genre['name'];
+        }
+        // Stocker les genres sous forme de liste de noms séparés par des virgules
+        $data['genre_list'] = implode(', ', $genre_names);
+    } else {
+        $data['genre_list'] = 'Non spécifié'; // Par défaut, si aucun genre n'est trouvé
+    }
 
     return $data ?? null;
 }
